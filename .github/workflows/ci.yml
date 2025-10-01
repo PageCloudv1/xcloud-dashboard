@@ -98,7 +98,7 @@ jobs:
 
       - name: ⏳ Wait for application to be ready
         run: |
-          timeout 60 bash -c 'until curl -f http://localhost:4173; do sleep 2; done'
+          timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
 
       - name: 🎭 Run E2E tests
         run: pnpm run test:e2e
@@ -142,7 +142,7 @@ jobs:
 
       - name: ⏳ Wait for application
         run: |
-          timeout 60 bash -c 'until curl -f http://localhost:4173; do sleep 2; done'
+          timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
 
       - name: ♿ Run accessibility tests
         run: pnpm run test:a11y

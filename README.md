@@ -56,6 +56,7 @@ pnpm format
 ## 📊 Métricas do Dashboard
 
 O dashboard exibe:
+
 - Usuários ativos
 - Aplicações rodando
 - Logs processados
@@ -90,4 +91,3 @@ https://pagecloudv1.github.io/xcloud-docs/
 - [ ] Adicionar WebSocket para updates em tempo real
 - [ ] Implementar páginas de gerenciamento (usuários, apps, logs)
 - [ ] Adicionar testes E2E completos
-

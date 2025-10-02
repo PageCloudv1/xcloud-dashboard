@@ -253,8 +253,9 @@ export function NotificationCenter() {
 
       // Play notification sound if enabled
       if (settings?.sound) {
-        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhCSuBzvLZiTYIG2m98OScTgwOUarm7blnIgi1g8bz25RFDQ5VquX7tGQlCShz')
-        audio.volume = 0.3
+        // Use constant for audio data; allow volume to be set via settings (default 0.3)
+        const audio = new Audio('data:audio/wav;base64,' + NOTIFICATION_SOUND_BASE64);
+        audio.volume = settings?.soundVolume ?? 0.3;
         audio.play().catch(() => {}) // Ignore audio errors
       }
 

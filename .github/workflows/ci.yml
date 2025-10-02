@@ -2,9 +2,9 @@ name: 🎨 xCloud Dashboard - Frontend CI/CD
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   release:
     types: [published]
 
@@ -23,218 +23,217 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: ['18', '20', '21']
-    
+
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
 
-    - name: 📦 Setup pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: ${{ env.PNPM_VERSION }}
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
-    - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'pnpm'
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
-    - name: 📦 Install dependencies
-      run: pnpm install --frozen-lockfile
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    - name: 🔍 Lint code
-      run: |
-        pnpm run lint
-        pnpm run lint:css
+      - name: 🔍 Lint code
+        run: |
+          pnpm run lint
+          pnpm run lint:css
 
-    - name: 🎨 Check code formatting
-      run: pnpm run format:check
+      - name: 🎨 Check code formatting
+        run: pnpm run format:check
 
-    - name: 🔍 TypeScript check
-      run: pnpm run type-check
+      - name: 🔍 TypeScript check
+        run: pnpm run type-check
 
-    - name: 🧪 Run unit tests
-      run: pnpm run test:unit -- --coverage --watchAll=false
+      - name: 🧪 Run unit tests
+        run: pnpm run test:unit -- --coverage --watchAll=false
 
-    - name: 🏗️ Build application
-      run: pnpm run build
+      - name: 🏗️ Build application
+        run: pnpm run build
 
-    - name: 📊 Upload coverage to Codecov
-      if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20'
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage/lcov.info
-        flags: frontend
-        name: xcloud-dashboard-coverage
+      - name: 📊 Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20'
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: frontend
+          name: xcloud-dashboard-coverage
 
   e2e-test:
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
-    
+
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
 
-    - name: 📦 Setup pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: ${{ env.PNPM_VERSION }}
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
-    - name: 🟢 Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'pnpm'
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
 
-    - name: 📦 Install dependencies
-      run: pnpm install --frozen-lockfile
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    - name: 🧪 Install Playwright browsers
-      run: pnpm exec playwright install --with-deps
+      - name: 🧪 Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
 
-    - name: 🏗️ Build application
-      run: pnpm run build
+      - name: 🏗️ Build application
+        run: pnpm run build
 
-    - name: 🚀 Start application
-      run: pnpm run preview &
-      
-    - name: ⏳ Wait for application to be ready
-      run: |
-        timeout 60 bash -c 'until curl -f http://localhost:4173; do sleep 2; done'
+      - name: 🚀 Start application
+        run: pnpm run preview &
 
-    - name: 🎭 Run E2E tests
-      run: pnpm run test:e2e
+      - name: ⏳ Wait for application to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
 
-    - name: 📊 Upload E2E test results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: e2e-results-${{ github.run_id }}
-        path: |
-          test-results/
-          playwright-report/
+      - name: 🎭 Run E2E tests
+        run: pnpm run test:e2e
+
+      - name: 📊 Upload E2E test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: e2e-results-${{ github.run_id }}
+          path: |
+            test-results/
+            playwright-report/
 
   accessibility:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
-    
+
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
 
-    - name: 📦 Setup pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: ${{ env.PNPM_VERSION }}
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
-    - name: 🟢 Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'pnpm'
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
 
-    - name: 📦 Install dependencies
-      run: pnpm install --frozen-lockfile
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    - name: 🏗️ Build application
-      run: pnpm run build
+      - name: 🏗️ Build application
+        run: pnpm run build
 
-    - name: 🚀 Start application
-      run: pnpm run preview &
-      
-    - name: ⏳ Wait for application
-      run: |
-        timeout 60 bash -c 'until curl -f http://localhost:4173; do sleep 2; done'
+      - name: 🚀 Start application
+        run: pnpm run preview &
 
-    - name: ♿ Run accessibility tests
-      run: pnpm run test:a11y
+      - name: ⏳ Wait for application
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
+
+      - name: ♿ Run accessibility tests
+        run: pnpm run test:a11y
 
   security:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     permissions:
       security-events: write
-    
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
-      
-    - name: 🔒 Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
 
-    - name: 📊 Upload Trivy scan results
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
+      - name: 🔒 Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
 
-    - name: 🔍 CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        languages: javascript
+      - name: 📊 Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
 
-    - name: 📦 Audit npm dependencies
-      run: |
-        npx audit-ci --config .auditci.json
+      - name: 🔍 CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          languages: javascript
+
+      - name: 📦 Audit npm dependencies
+        run: |
+          npx audit-ci --config .auditci.json
 
   build-and-deploy:
     needs: [test, e2e-test, accessibility, security]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.event_name == 'release'
-    
+
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
 
-    - name: 📦 Setup pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: ${{ env.PNPM_VERSION }}
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
-    - name: 🟢 Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'pnpm'
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
 
-    - name: 📦 Install dependencies
-      run: pnpm install --frozen-lockfile
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    - name: 🏗️ Build for production
-      run: |
-        pnpm run build
-        
-    - name: 🗜️ Compress build artifacts
-      run: |
-        tar -czf dashboard-build.tar.gz -C dist .
+      - name: 🏗️ Build for production
+        run: |
+          pnpm run build
 
-    - name: 📦 Upload build artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: dashboard-build-${{ github.sha }}
-        path: dashboard-build.tar.gz
-        retention-days: 30
+      - name: 🗜️ Compress build artifacts
+        run: |
+          tar -czf dashboard-build.tar.gz -C dist .
 
-    - name: 🚀 Deploy to Staging
-      if: github.ref == 'refs/heads/main'
-      run: |
-        echo "🚀 Deploying to staging environment..."
-        # TODO: Add staging deployment logic
-        
-    - name: 🚀 Deploy to Production
-      if: github.event_name == 'release'
-      run: |
-        echo "🚀 Deploying to production environment..."
-        # TODO: Add production deployment logic
+      - name: 📦 Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dashboard-build-${{ github.sha }}
+          path: dashboard-build.tar.gz
+          retention-days: 30
 
-    - name: 📢 Notify deployment
-      if: success()
-      run: |
-        echo "🎉 xCloud Dashboard deployed successfully!"
-        echo "Environment: ${{ github.ref == 'refs/heads/main' && 'staging' || 'production' }}"
+      - name: 🚀 Deploy to Staging
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "🚀 Deploying to staging environment..."
+          # TODO: Add staging deployment logic
+
+      - name: 🚀 Deploy to Production
+        if: github.event_name == 'release'
+        run: |
+          echo "🚀 Deploying to production environment..."
+          # TODO: Add production deployment logic
+
+      - name: 📢 Notify deployment
+        if: success()
+        run: |
+          echo "🎉 xCloud Dashboard deployed successfully!"
+          echo "Environment: ${{ github.ref == 'refs/heads/main' && 'staging' || 'production' }}"

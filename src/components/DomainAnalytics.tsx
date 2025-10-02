@@ -201,14 +201,14 @@ export default function DomainAnalytics() {
     }
   }, [mockDomains, selectedDomain])
 
-  const getVitalsStatus = (metric: string, value: number) => {
+  const getVitalsStatus = (metric: 'lcp' | 'fid' | 'cls', value: number) => {
     const thresholds = {
       lcp: { good: 2.5, poor: 4.0 },
       fid: { good: 100, poor: 300 },
       cls: { good: 0.1, poor: 0.25 }
     }
     
-    const threshold = thresholds[metric as keyof typeof thresholds]
+    const threshold = thresholds[metric]
     if (value <= threshold.good) return 'good'
     if (value <= threshold.poor) return 'needs-improvement'
     return 'poor'
